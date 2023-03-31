@@ -2,7 +2,7 @@
 module NavbarHelper
   def nav_bar(options={}, &block)
     nav_bar_nav(options) do
-      container_div(options[:brand], options[:brand_link], options[:responsive], options[:fluid], options[:no_turbolink]) do
+      container_div(options[:brand], options[:logo], options[:brand_link], options[:responsive], options[:fluid], options[:no_turbolink]) do
         yield if block_given?
       end
     end
@@ -21,7 +21,7 @@ module NavbarHelper
         link_to path, options, &block
       else
         link_to name, path, options, &block
-      end 
+      end
     end
   end
 
@@ -107,58 +107,65 @@ module NavbarHelper
 
     position = "static-#{options[:static].to_s}" if options[:static]
     position = "fixed-#{options[:fixed].to_s}" if options[:fixed]
+    cust_class = options[:class].to_s if options[:class].present?
     inverse = (options[:inverse].present? && options[:inverse] == true) ? true : false
+    id = options[:id].to_s if options[:id].present?
 
-    content_tag :nav, :class => nav_bar_css_class(position, inverse), :role => "navigation" do
+    content_tag :nav, :class => nav_bar_css_class(position, inverse, cust_class), :role => "navigation", :id => id do
       yield
     end
   end
 
-  def container_div(brand, brand_link, responsive, fluid, no_turbolink, &block)
+  def container_div(brand, logo, brand_link, responsive, fluid, no_turbolink, &block)
     div_container_class = fluid ? "container-fluid" : "container"
     no_turbolink ||= false
 
     content_tag :div, :class => div_container_class do
-      container_div_with_block(brand, brand_link, responsive, no_turbolink, &block)
+      container_div_with_block(brand, logo, brand_link, responsive, no_turbolink, &block)
     end
   end
 
-  def container_div_with_block(brand, brand_link, responsive, no_turbolink, &block)
+  def container_div_with_block(brand, logo, brand_link, responsive, no_turbolink, &block)
     output = []
     if responsive == true
-      output << responsive_nav_header(brand, brand_link, no_turbolink)
+      output << responsive_nav_header(brand, logo, brand_link, no_turbolink)
       output << responsive_div { capture(&block) }
     else
-      output << brand_link(brand, brand_link, no_turbolink)
+      output << brand_link(brand, logo, brand_link, no_turbolink)
       output << capture(&block)
     end
     output.join("\n").html_safe
   end
 
-  def responsive_nav_header(brand, brand_link, no_turbolink)
+  def responsive_nav_header(brand, logo, brand_link, no_turbolink)
     content_tag(:div, :class => "navbar-header") do
       output = []
       output << responsive_button
-      output << brand_link(brand, brand_link, no_turbolink)
+      output << brand_link(brand, logo, brand_link, no_turbolink)
       output.join("\n").html_safe
     end
   end
 
-  def nav_bar_css_class(position, inverse = false)
+  def nav_bar_css_class(position, inverse = false, cust_class)
     css_class = ["navbar", "navbar-default"]
     css_class << "navbar-#{position}" if position.present?
     css_class << "navbar-inverse" if inverse
+    css_class << cust_class if cust_class.present?
     css_class.join(" ")
   end
 
-  def brand_link(name, url, no_turbolink)
+  def brand_link(name, logo, url, no_turbolink)
     return "" if name.blank?
     url ||= root_url
 
     if no_turbolink
-      link_to(name, url, :class => "navbar-brand", :data => { :no_turbolink => true})
+      link_to(url, :class => "navbar-brand", :data => { :no_turbolink => true}) do
+        content_tag(:span, image_tag(logo, :alt => '', :style => 'height:45px;'), :style => 'position:relative;top:-12px;') + " " + name
+      end
     else
-      link_to(name, url, :class => "navbar-brand")
+      link_to(url, :class => "navbar-brand") do
+        content_tag(:span, image_tag(logo, :alt => '', :style => 'height:45px;'), :style => 'position:relative;top:-12px;') + " " + name
+      end
     end
   end
 
