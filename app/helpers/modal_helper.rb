@@ -19,7 +19,7 @@ module ModalHelper
   end
 
   def modal_header(options, &block)
-    content_tag :div, :class => 'modal-header', :id => options[:id]+"-header" do
+    content_tag :div, :class => 'modal-header', :id => options[:id]+"-header", :style => options[:style] do
       if options[:show_close]
         close_button(options[:dismiss]) +
         content_tag(:h4, options[:title], :class => 'modal-title', &block)
@@ -34,7 +34,7 @@ module ModalHelper
   end
 
   def modal_footer(options, &block)
-    content_tag :div, options[:content], :class => 'modal-footer', :id => options[:id]+"-footer", &block
+    content_tag :div, options[:content], :class => 'modal-footer', :id => options[:id]+"-footer", :style => options[:style], &block
   end
 
   def close_button(dismiss)
