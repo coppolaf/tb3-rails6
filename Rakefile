@@ -5,7 +5,7 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 desc "Bundle the gem"
-task :bundle  => [:bundle_install, :build_static_stylesheets] do
+task :bundle  => [:bundle_install] do
   sh 'gem build *.gemspec'
   sh 'gem install *.gem'
   sh 'rm *.gem'
@@ -18,7 +18,11 @@ end
 
 desc "Build the static precompiled stylesheets from Less sources"
 task :build_static_stylesheets do
-  require 'less'
+  begin
+    require 'less'
+  rescue LoadError
+    abort 'The build_static_stylesheets task requires the optional less gem. Install it outside the gem runtime dependencies before rebuilding static CSS.'
+  end
 
   toolkit_path = File.join('vendor', 'toolkit')
 

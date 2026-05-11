@@ -15,7 +15,7 @@ twitter-bootstrap-rails project integrates Bootstrap CSS toolkit for Rails Asset
 [![GitHub forks](https://img.shields.io/github/forks/seyhunak/twitter-bootstrap-rails.svg)](https://github.com/seyhunak/twitter-bootstrap-rails/network)
 [![GitHub issues](https://img.shields.io/github/issues/seyhunak/twitter-bootstrap-rails.svg)](https://github.com/seyhunak/twitter-bootstrap-rails/issues)
 
-[![OpenCollective](https://opencollective.com/twitter-bootstrap-rails/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/twitter-bootstrap-rails/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/twitter-bootstrap-rails/sponsors/badge.svg)](#sponsors)
 
 ## Screencasts
@@ -32,56 +32,34 @@ in this episode continues on the Bootstrap project showing how to display flash 
 
 ## Installing the Gem
 
-The [Twitter Bootstrap Rails gem](http://rubygems.org/gems/twitter-bootstrap-rails) can provide the Bootstrap stylesheets in two ways.
+The [Twitter Bootstrap Rails gem](http://rubygems.org/gems/twitter-bootstrap-rails) provides Bootstrap stylesheets as precompiled CSS by default. This avoids the deprecated Less/Ruby Racer toolchain on modern Rails applications.
 
-The plain CSS way is how Bootstrap is provided on [the official website](http://twbs.github.io/bootstrap/).
-
-The [Less](http://lesscss.org/) way provides more customisation options, like changing theme colors and provides useful Less mixins for your code, but requires the
-Less gem and the Ruby Racer Javascript runtime (not available on Microsoft Windows).
-
-### Installing the Less stylesheets
-
-To use Less stylesheets, you'll need the [less-rails gem](http://rubygems.org/gems/less-rails), and one of [JavaScript runtimes supported by CommonJS](https://github.com/cowboyd/commonjs.rb#supported-runtimes).
-
-Include these lines in the Gemfile to install the gems from [RubyGems.org](http://rubygems.org):
-
-```ruby
-gem "therubyracer"
-gem "less-rails" #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
-gem "twitter-bootstrap-rails"
-```
-
-or you can install from latest build;
-
-```ruby
-gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
-```
-
-Then run `bundle install` from the command line:
-
-    bundle install
-
-Then run the bootstrap generator to add Bootstrap includes into your assets:
-
-    rails generate bootstrap:install less
-
-If you need to skip coffeescript replacement into app generators, use:
-
-    rails generate bootstrap:install --no-coffeescript
+The [Less](http://lesscss.org/) way is still available as an optional legacy mode for applications that already carry a Less compiler, but `less-rails`, `less`, `execjs`, and `therubyracer` are not runtime dependencies of this gem.
 
 ### Installing the CSS stylesheets
 
-If you don't need to customize the stylesheets using Less, the only gem you need is the `twitter-bootstrap-rails` gem:
+For the default CSS installation, the only gem you need is the `twitter-bootstrap-rails` gem:
 
 ```ruby
 gem "twitter-bootstrap-rails"
 ```
-
 After running `bundle install`, run the generator:
+
+    rails generate bootstrap:install
+
+You can also pass `static` explicitly:
 
     rails generate bootstrap:install static
 
 If your Rails server is running, make sure to restart it.
+
+### Installing the optional Less stylesheets
+
+Less support is legacy and opt-in. To generate `bootstrap_and_overrides.css.less`, add a Less compiler to your application yourself (for example `less-rails` plus a JavaScript runtime such as Node.js) and run:
+
+    rails generate bootstrap:install less
+
+Use this mode only if your application still needs Bootstrap Less variables or mixins at runtime. New Rails 6+ applications should prefer the default static CSS generator.
 
 ## Generating layouts and views
 
@@ -208,7 +186,7 @@ If this is the case, you **must** use @import instead of `*=` in your manifest f
 
 ### Icons
 
-By default, this gem (when using less generator) won't enable standard Bootstraps's Glyphicons.
+By default, this gem (when using the Less generator) won't enable standard Bootstraps's Glyphicons.
 
 If you would like to restore the default Glyphicons, inside the generated `bootstrap_and_overrides.css.less` uncomment these lines:
 
